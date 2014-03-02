@@ -11,5 +11,7 @@ resolvers += "repo.codehale.com" at "http://repo.codahale.com"
 libraryDependencies ++= Seq(
   "com.twitter" % "scalding-core_2.9.2" % "0.8.8",
    "org.apache.hadoop" % "hadoop-core" % "1.0.0",
-   "org.json4s" %% "json4s-native" % "3.2.7"
-  )
+   "org.json4s" %% "json4s-native" % "3.2.7",
+  "joda-time" % "joda-time" % "2.0",
+  "org.joda" % "joda-convert" % "1.6"
+)
