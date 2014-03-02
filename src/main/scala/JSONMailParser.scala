@@ -21,17 +21,18 @@ class JSONMailParser(args:Args) extends Job(args)
   val finalSchema = ('from,'to,'subject,'date,'attachments,'labels,'comment)
 
   TextLine(args("input"))
+    .addTrap(Csv("resources/errors"))
     .map('line->fieldSchema)
   {
     line:String => {
-      try{
+      //try{
         val parsed=JsonMethods.parse(line).extract[mailJSON] // parse JSON and then "unmarshall" into mailJSON case class
         // See coments for mailJSON case class regarding why these fields aren't wrapped in Option[T]
-        (1,scrubAddresses(parsed.from),parsed.to,parsed.subject.trim,parsed.parsedDate.toString("yyyy:MM:dd"),parsed.attachments,parsed.labels.trim,parsed.body)
-      }
+        (1,scrubAddresses(parsed.from),parsed.to,parsed.subject.trim,parsed.parsedDate.toString("yyyy:MM:dd"),parsed.attachments,parsed.labels.trim,parsed.body,"")
+/*      }
       catch { // in case of any exceptions, we return a tuple of empty strings. The arity of the tuple in try and catch need to match
         case e:Exception => (0,"","","","","","","") // 0 for the value of "success" means it failed
-      }
+      }*/
     }
   }
     //.filter('success){ success: Int => success ==1 } // only take successfully parsed tuples
