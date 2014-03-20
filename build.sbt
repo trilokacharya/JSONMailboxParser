@@ -13,5 +13,7 @@ libraryDependencies ++= Seq(
    "org.apache.hadoop" % "hadoop-core" % "1.0.0",
    "org.json4s" %% "json4s-native" % "3.2.7",
   "joda-time" % "joda-time" % "2.0",
-  "org.joda" % "joda-convert" % "1.6"
+  "org.joda" % "joda-convert" % "1.6",
+  "org.slf4j" % "slf4j-simple" % "1.6.4",
+  "log4j" % "log4j" % "1.2.14"
 )

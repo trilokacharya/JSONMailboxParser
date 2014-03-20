@@ -1,1 +1,1 @@
-sbt "run-main JSONMailParser JSONMailParser --local -input q:\\tempOut.json -output resources/testout"
+sbt "run-main JSONMailParser JSONMailParser --local -input q:\\tempOut_2.json -output resources/testout -errors resources/errors -output2 resources/testout2"
