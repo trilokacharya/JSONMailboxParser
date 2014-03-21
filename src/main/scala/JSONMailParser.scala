@@ -47,14 +47,15 @@ class JSONMailParser(args:Args) extends Job(args)
     .map('subject -> 'subjLength) {s:String => s.length}
     // group by sender and whether it was sent on a weekend. Then count the number of messages in that group
     // and get the average length of messages in each group along with average subject length in each group
-    .groupBy('from,'isWeekend)(_.size('count).average('mailLength).average('subjLength))
-    .groupAll(_.sortBy('count)) // order by message count
+    .groupBy('from,'isWeekend)(_.size('count).average('mailLength).average('subjLength)) // we split up each person's
+                                                    // totals into 2. 1 for weekdays and another for weekends
+    .groupAll(_.sortBy('count)) // order by message count , in case we're writing it out here
 
   //personStat.write(Csv(args("output2"),writeHeader=true))
-  // Could write out this intermediate step
+  // Could end processing here if this is all we wanted to get
 
   // In the next step, we count the number of contiguous days that emails are exchanged. Once the number of contiguous
-  // days reaches a streakThreshold, we do a +1 for streaks with that person
+  // days reaches a streakThreshold, we do increment the number of streaks with that person
   val streakThreshold = 3
 
   val df = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm:SS")
@@ -76,10 +77,13 @@ class JSONMailParser(args:Args) extends Job(args)
     .map('date->'date) {date:DateTime => date.toString(df)}
     .filter('totals) { tot:Int => tot > 1}
     .project('from,'totals)
-    .joinWithSmaller('from->'from,personStat)
+    .joinWithSmaller('from->'from,personStat) //demonstrating a join. personStat is split into weekday/weekend stats, so
+                                              // we get 2 lines per person
+    .groupAll(_.sortBy('from))
 
   contiguousThread
     .write(Csv(args("output"),writeHeader=true))
+
 
   /**
    * Function to sanitize email addresses
@@ -110,7 +114,7 @@ case class mailJSON(from:String,to:String,cc:String,subject:String,date:String,l
 {
   //val dFormat:DateTimeFormatter=DateTimeFormat.forPattern("EEE, MMM dd, yyyy hh:mm aa")
   val dFormat:DateTimeFormatter=DateTimeFormat.forPattern("dd-MM-yyyy HH:mm:SS")
-  def parsedDate=try {
+  val parsedDate=try {
     DateTime.parse(date,dFormat)}
   catch{
     case _=> DateTime.parse("01-01-1900 00:01:00",dFormat) // default date
