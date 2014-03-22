@@ -1,6 +1,6 @@
-name := "Scaling Play"
+name := "Scalding Takeout"
 
-version := "SNAPSHOT-0.1"
+version := "SNAPSHOT-0.5"
 
 scalaVersion := "2.9.2"
 
